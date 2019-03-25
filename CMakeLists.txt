@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   rostest
   gazebo_rad_msgs
-  my_utils
+  geometry_visual_utils
   )
 
 # include Eigen3
@@ -31,7 +31,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 catkin_package(
   INCLUDE_DIRS include
   DEPENDS Eigen gazebo_ros gazebo_rad_msgs 
-  CATKIN_DEPENDS roscpp my_utils
+  CATKIN_DEPENDS roscpp geometry_visual_utils
   )
 
 include_directories(

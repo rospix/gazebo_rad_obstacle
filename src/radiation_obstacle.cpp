@@ -14,7 +14,7 @@
 #include <gazebo/physics/BoxShape.hh>
 #include <ignition/math.hh>
 
-#include <my_utils/my_utils.h>
+#include <geometry_visual_utils/visual_utils.h>
 
 #include <mutex>
 
@@ -191,9 +191,9 @@ namespace gazebo
     rect.points.push_back(p4);
 
 
-    RadiationVisualizer::visualizeRect(visualizer_pub, rect, "/base_link", 0.0, 1.0, 0.7);
+    VisualTools::visualizeRect(visualizer_pub, rect, "/base_link", 0.0, 1.0, 0.7);
   }
 
-  //}
+    //}
 
 }  // namespace gazebo
