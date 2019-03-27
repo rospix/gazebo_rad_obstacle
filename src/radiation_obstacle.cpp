@@ -59,8 +59,6 @@ namespace gazebo
     ros::CallbackQueue               rosQueue;
     std::thread                      rosQueueThread;
 
-    ros::Publisher visualizer_pub;
-
     gazebo_rad_msgs::msgs::RadiationObstacle obstacle_msg;
 
     common::Time last_gps_time_;
@@ -72,7 +70,7 @@ namespace gazebo
     double      width, height, depth;
 
     BatchVisualizer bv;
-    Box             box;
+    Cuboid             cuboid;
   };
 
   GZ_REGISTER_MODEL_PLUGIN(RadiationObstacle)
@@ -137,7 +135,7 @@ namespace gazebo
     this->rosQueueThread = std::thread(std::bind(&RadiationObstacle::QueueThread, this));
 
     bv  = BatchVisualizer(*this->rosNode.get(), "/base_link");
-    box = Box(Eigen::Vector3d(0.0, 0.0, 0.0), Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0), 1.0, 1.0, 1.0);
+    cuboid = Cuboid(Eigen::Vector3d(0.0, 0.0, 0.0), Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0), 1.0, 1.0, 1.0);
 
     ROS_INFO("[RadiationObstacle%u]: initialized", this->model_->GetId());
   }
@@ -175,9 +173,9 @@ namespace gazebo
       Eigen::Vector3d    center(link->WorldPose().Pos().X(), link->WorldPose().Pos().Y(), link->WorldPose().Pos().Z());
       Eigen::Quaterniond orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(), model_->WorldPose().Rot().Z());
 
-      box = Box(center, orientation, depth, width, height);
+      cuboid = Cuboid(center, orientation, depth, width, height);
       bv.clear();
-      bv.addBox(box);
+      bv.addCuboid(cuboid);
       bv.publish();
       last_time_ = current_time;
     }
