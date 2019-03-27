@@ -11,7 +11,6 @@
 #include <gazebo/msgs/msgs.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/physics/Link.hh>
-#include <gazebo/physics/BoxShape.hh>
 #include <ignition/math.hh>
 
 #include <geometry_visual_utils/visual_utils.h>
@@ -59,7 +58,8 @@ namespace gazebo
     std::unique_ptr<ros::NodeHandle> rosNode;
     ros::CallbackQueue               rosQueue;
     std::thread                      rosQueueThread;
-    ros::Publisher                   visualizer_pub;
+
+    ros::Publisher visualizer_pub;
 
     gazebo_rad_msgs::msgs::RadiationObstacle obstacle_msg;
 
@@ -70,6 +70,9 @@ namespace gazebo
 
     std::string material_;
     double      width, height, depth;
+
+    BatchVisualizer bv;
+    Box             box;
   };
 
   GZ_REGISTER_MODEL_PLUGIN(RadiationObstacle)
@@ -133,7 +136,8 @@ namespace gazebo
 
     this->rosQueueThread = std::thread(std::bind(&RadiationObstacle::QueueThread, this));
 
-    this->visualizer_pub = this->rosNode->advertise<visualization_msgs::Marker>("/radiation/obstacle", 1);
+    bv  = BatchVisualizer(*this->rosNode.get(), "/base_link");
+    box = Box(Eigen::Vector3d(0.0, 0.0, 0.0), Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0), 1.0, 1.0, 1.0);
 
     ROS_INFO("[RadiationObstacle%u]: initialized", this->model_->GetId());
   }
@@ -149,51 +153,36 @@ namespace gazebo
     ignition::math::Pose3d T_W_I = model_->WorldPose();
     auto                   link  = model_->GetLinks()[0];
 
-    obstacle_msg.set_pos_x(link->WorldPose().Pos().X());
-    obstacle_msg.set_pos_y(link->WorldPose().Pos().Y());
-    obstacle_msg.set_pos_z(link->WorldPose().Pos().Z());
+    if (current_time.sec > last_time_.sec + 0.1) {
+      obstacle_msg.set_pos_x(link->WorldPose().Pos().X());
+      obstacle_msg.set_pos_y(link->WorldPose().Pos().Y());
+      obstacle_msg.set_pos_z(link->WorldPose().Pos().Z());
 
-    obstacle_msg.set_ori_w(link->WorldPose().Rot().W());
-    obstacle_msg.set_ori_x(link->WorldPose().Rot().X());
-    obstacle_msg.set_ori_y(link->WorldPose().Rot().Y());
-    obstacle_msg.set_ori_z(link->WorldPose().Rot().Z());
+      obstacle_msg.set_ori_w(link->WorldPose().Rot().W());
+      obstacle_msg.set_ori_x(link->WorldPose().Rot().X());
+      obstacle_msg.set_ori_y(link->WorldPose().Rot().Y());
+      obstacle_msg.set_ori_z(link->WorldPose().Rot().Z());
 
-    obstacle_msg.set_scale_x(depth);
-    obstacle_msg.set_scale_y(width);
-    obstacle_msg.set_scale_z(height);
+      obstacle_msg.set_scale_x(depth);
+      obstacle_msg.set_scale_y(width);
+      obstacle_msg.set_scale_z(height);
 
-    obstacle_msg.set_material(material_);
-    obstacle_msg.set_id(this->node_handle_->GetId());
+      obstacle_msg.set_material(material_);
+      obstacle_msg.set_id(this->node_handle_->GetId());
 
-    obstacle_pub->Publish(obstacle_msg);
+      obstacle_pub->Publish(obstacle_msg);
 
-    Eigen::Vector3d p1, p2, p3, p4;
-    Rectangle       rect;
-    p1[0] = link->WorldPose().Pos().X() + depth / 2;
-    p1[1] = link->WorldPose().Pos().Y() + width / 2;
-    p1[2] = link->WorldPose().Pos().Z() + height / 2;
+      Eigen::Vector3d    center(link->WorldPose().Pos().X(), link->WorldPose().Pos().Y(), link->WorldPose().Pos().Z());
+      Eigen::Quaterniond orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(), model_->WorldPose().Rot().Z());
 
-    p2[0] = link->WorldPose().Pos().X() + depth / 2;
-    p2[1] = link->WorldPose().Pos().Y() + width / 2;
-    p2[2] = link->WorldPose().Pos().Z() - height / 2;
-
-    p3[0] = link->WorldPose().Pos().X() + depth / 2;
-    p3[1] = link->WorldPose().Pos().Y() - width / 2;
-    p3[2] = link->WorldPose().Pos().Z() - height / 2;
-
-    p4[0] = link->WorldPose().Pos().X() + depth / 2;
-    p4[1] = link->WorldPose().Pos().Y() - width / 2;
-    p4[2] = link->WorldPose().Pos().Z() + height / 2;
-
-    rect.points.push_back(p1);
-    rect.points.push_back(p2);
-    rect.points.push_back(p3);
-    rect.points.push_back(p4);
-
-
-    VisualTools::visualizeRect(visualizer_pub, rect, "/base_link", 0.0, 1.0, 0.7);
+      box = Box(center, orientation, depth, width, height);
+      bv.clear();
+      bv.addBox(box);
+      bv.publish();
+      last_time_ = current_time;
+    }
   }
 
-    //}
+  //}
 
 }  // namespace gazebo
