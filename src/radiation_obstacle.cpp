@@ -69,7 +69,6 @@ namespace gazebo
     std::string material_;
     double      width, height, depth;
 
-    BatchVisualizer bv;
     Cuboid             cuboid;
   };
 
@@ -134,7 +133,6 @@ namespace gazebo
 
     this->rosQueueThread = std::thread(std::bind(&RadiationObstacle::QueueThread, this));
 
-    bv  = BatchVisualizer(*this->rosNode.get(), "/base_link");
     cuboid = Cuboid(Eigen::Vector3d(0.0, 0.0, 0.0), Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0), 1.0, 1.0, 1.0);
 
     ROS_INFO("[RadiationObstacle%u]: initialized", this->model_->GetId());
@@ -174,9 +172,6 @@ namespace gazebo
       Eigen::Quaterniond orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(), model_->WorldPose().Rot().Z());
 
       cuboid = Cuboid(center, orientation, depth, width, height);
-      bv.clear();
-      bv.addCuboid(cuboid);
-      bv.publish();
       last_time_ = current_time;
     }
   }
