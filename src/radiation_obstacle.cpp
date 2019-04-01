@@ -66,10 +66,12 @@ namespace gazebo
 
     std::string modelName;
 
-    std::string material_;
+    std::string material;
     double      width, height, depth;
+    double      density;
+    double      mac60kev, mac600kev;
 
-    Cuboid             cuboid;
+    Cuboid cuboid;
   };
 
   GZ_REGISTER_MODEL_PLUGIN(RadiationObstacle)
@@ -106,21 +108,43 @@ namespace gazebo
     last_time_     = world_->SimTime();
     last_gps_time_ = world_->SimTime();
 
-    if (_sdf->HasElement("material")) {
-      getSdfParam<std::string>(_sdf, "material", material_, material_);
-    } else {
-      ROS_INFO("[RadiationObstacle]: parameter 'material' was not specified");
-    }
-
+    /* parse SDF //{ */
     if (_sdf->HasElement("width")) {
       getSdfParam<double>(_sdf, "width", width, width);
+    } else {
+      ROS_INFO("[RadiationObstacle]: parameter 'width' was not specified");
     }
     if (_sdf->HasElement("height")) {
       getSdfParam<double>(_sdf, "height", height, height);
+    } else {
+      ROS_INFO("[RadiationObstacle]: parameter 'height' was not specified");
     }
     if (_sdf->HasElement("depth")) {
       getSdfParam<double>(_sdf, "depth", depth, depth);
+    } else {
+      ROS_INFO("[RadiationObstacle]: parameter 'depth' was not specified");
     }
+    if (_sdf->HasElement("material")) {
+      getSdfParam<std::string>(_sdf, "material", material, material);
+    } else {
+      ROS_INFO("[RadiationObstacle]: parameter 'material' was not specified");
+    }
+    if (_sdf->HasElement("density")) {
+      getSdfParam<double>(_sdf, "density", density, density);
+    } else {
+      ROS_INFO("[RadiationObstacle]: parameter 'density' was not specified");
+    }
+    if (_sdf->HasElement("mac60kev")) {
+      getSdfParam<double>(_sdf, "mac60kev", mac60kev, mac60kev);
+    } else {
+      ROS_INFO("[RadiationObstacle]: parameter 'mac60kev' was not specified");
+    }
+    if (_sdf->HasElement("mac600kev")) {
+      getSdfParam<double>(_sdf, "mac600kev", mac600kev, mac600kev);
+    } else {
+      ROS_INFO("[RadiationObstacle]: parameter 'mac600kev' was not specified");
+    }
+    //}a
 
     node_handle_ = transport::NodePtr(new transport::Node());
     node_handle_->Init();
@@ -163,15 +187,19 @@ namespace gazebo
       obstacle_msg.set_scale_y(width);
       obstacle_msg.set_scale_z(height);
 
-      obstacle_msg.set_material(material_);
+      obstacle_msg.set_material(material);
+      obstacle_msg.set_density(density);
+      obstacle_msg.set_mac60kev(mac60kev);
+      obstacle_msg.set_mac600kev(mac600kev);
       obstacle_msg.set_id(this->node_handle_->GetId());
 
       obstacle_pub->Publish(obstacle_msg);
 
       Eigen::Vector3d    center(link->WorldPose().Pos().X(), link->WorldPose().Pos().Y(), link->WorldPose().Pos().Z());
-      Eigen::Quaterniond orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(), model_->WorldPose().Rot().Z());
+      Eigen::Quaterniond orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(),
+                                     model_->WorldPose().Rot().Z());
 
-      cuboid = Cuboid(center, orientation, depth, width, height);
+      cuboid     = Cuboid(center, orientation, depth, width, height);
       last_time_ = current_time;
     }
   }
