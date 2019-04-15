@@ -1,8 +1,16 @@
 #!/bin/bash
 
-for f in */*.erb; do
-  echo "Generating ${f:0:-4}"
-  erb "$f" > ${f:0:-4}
+for filename in *; do
+  if [[ -d $filename ]]; then
+    cd $filename
+    for f in *; do
+      if [[ $f == *".erb"* ]]; then
+        echo "Generating ${filename}/${f:0:-4}"
+        erb "$f" > ${f:0:-4}
+      fi
+    done
+    cd ..
+  fi
 done
 echo "Done"
 

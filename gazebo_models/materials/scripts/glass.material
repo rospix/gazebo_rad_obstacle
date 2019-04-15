@@ -1,0 +1,18 @@
+material glass/Image
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.8 0.95 1.0 0.1
+        diffuse 0.8 0.95 1.0 0.1
+        specular 0.0 0.0 0.0 0.5
+
+        texture_unit
+        {
+          texture glass.jpg
+            filtering trilinear
+        }
+    }
+  }
+}
