@@ -20,9 +20,9 @@
       <width>2.0</width> <!-- m -->
       <height>2.2</height> <!-- m -->
       <material>glass</material> <!-- m -->
-      <!-- <density>2.3</density> --> <!-- g/cm^3 -->
-      <!-- <mac60kev>2.66E-01</mac60kev> --> <!-- cm^2/g -->
-      <!-- <mac600kev>6.236E-02</mac600kev> --> <!-- cm^2/g -->
+      <density>2.3</density> <!-- g/cm^3 -->
+      <mac60kev>2.66E-01</mac60kev> <!-- cm^2/g -->
+      <mac600kev>6.236E-02</mac600kev> <!-- cm^2/g -->
     </plugin>
 
   </model>

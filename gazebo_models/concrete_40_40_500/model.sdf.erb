@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<%
+
+dirname = File.basename(Dir.pwd)
+dirname_split=dirname.split("_")
+
+material = dirname_split[0]
+
+depth = dirname_split[1].to_f/100
+width = dirname_split[2].to_f/100
+height = dirname_split[3].to_f/100
+
+vertical_offset = height/2
+
+density = 2.3
+mac60kev = 2.66E-01
+mac600kev = 6.236E-02
+
+%>
+<sdf version="1.5">
+<%= "<model name='" + dirname + "'>" %>
+      <static>1</static>
+      <link name="link">
+        <pose>0 0 <%= vertical_offset %> 0 0 0</pose>
+
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size><%= depth %> <%= width %> <%= height %></size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <%= "<uri>model://" + dirname + "/materials/scripts</uri>" %>
+              <%= "<uri>model://"  + dirname + "/materials/textures/</uri>" %>
+              <%= "<name>" + material + "/Image</name>" %>
+            </script>
+          </material>
+        </visual>
+
+      </link>
+
+      <%= "<plugin name='" + material + "' filename='libgazebo_rad_obstacle.so'>" %>
+        <depth><%= depth %></depth> <!-- m -->
+        <width><%= width %></width> <!-- m -->
+        <height><%= height %></height> <!-- m -->
+        <material><%= material %></material> <!-- m -->
+        <density><%= density %></density> <!-- g/cm^3 -->
+        <mac60kev><%= mac60kev %></mac60kev> <!-- cm^2/g -->
+        <mac600kev><%= mac600kev %></mac600kev> <!-- cm^2/g -->
+      </plugin>
+
+    </model>
+  </sdf>

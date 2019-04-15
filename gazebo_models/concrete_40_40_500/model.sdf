@@ -1,9 +1,7 @@
 <?xml version="1.0" ?>
 
-
-
 <sdf version="1.5">
-<model name='concrete40x40x500'>
+<model name='concrete_40_40_500'>
       <static>1</static>
       <link name="link">
         <pose>0 0 2.5 0 0 0</pose>
@@ -16,8 +14,8 @@
           </geometry>
           <material>
             <script>
-              <uri>model://concrete40x40x500/materials/scripts</uri>
-              <uri>model://concrete40x40x500/materials/textures/</uri>
+              <uri>model://concrete_40_40_500/materials/scripts</uri>
+              <uri>model://concrete_40_40_500/materials/textures/</uri>
               <name>concrete/Image</name>
             </script>
           </material>
