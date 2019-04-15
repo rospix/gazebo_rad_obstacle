@@ -28,9 +28,9 @@
         <width>0.0</width> <!-- m -->
         <height>0.0</height> <!-- m -->
         <material>gazebo</material> <!-- m -->
-        <density>2.3</density> <!-- g/cm^3 -->
-        <mac60kev>0.266</mac60kev> <!-- cm^2/g -->
-        <mac600kev>0.06236</mac600kev> <!-- cm^2/g -->
+        <density>6.22</density> <!-- g/cm^3 -->
+        <mac60kev>3.843</mac60kev> <!-- cm^2/g -->
+        <mac600kev>0.1138</mac600kev> <!-- cm^2/g -->
       </plugin>
 
     </model>
