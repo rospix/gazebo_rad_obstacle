@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="concrete20x300x280">
+  <model name="concrete10x300x280">
     <static>1</static>
     <link name="link">
       <pose>0 0 1.4 0 0 0</pose>

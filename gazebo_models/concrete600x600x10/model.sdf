@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <model name="concrete400x400x20">
+  <model name="concrete600x600x10">
     <static>1</static>
     <link name="link">
       <pose>0 0 0.05 0 0 0</pose>
@@ -8,7 +8,7 @@
       <visual name="visual">
         <geometry>
           <box>
-            <size>4.0 4.0 0.1</size>
+            <size>6.0 6.0 0.1</size>
           </box>
         </geometry>
       </visual>
@@ -16,8 +16,8 @@
     </link>
 
     <plugin name="concrete" filename="libgazebo_rad_obstacle.so">
-      <depth>4.0</depth> <!-- m -->
-      <width>4.0</width> <!-- m -->
+      <depth>6.0</depth> <!-- m -->
+      <width>6.0</width> <!-- m -->
       <height>0.1</height> <!-- m -->
       <material>concrete</material> <!-- m -->
       <density>2.3</density> <!-- g/cm^3 -->
