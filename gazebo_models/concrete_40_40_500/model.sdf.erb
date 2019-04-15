@@ -31,8 +31,8 @@ mac600kev = 6.236E-02
           </geometry>
           <material>
             <script>
-              <%= "<uri>model://" + dirname + "/materials/scripts</uri>" %>
-              <%= "<uri>model://"  + dirname + "/materials/textures/</uri>" %>
+              <%= "<uri>model://" + File.expand_path('..') + "/materials/scripts</uri>" %>
+              <%= "<uri>model://"  + File.expand_path('..') + "/materials/textures/</uri>" %>
               <%= "<name>" + material + "/Image</name>" %>
             </script>
           </material>

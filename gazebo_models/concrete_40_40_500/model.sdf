@@ -14,8 +14,8 @@
           </geometry>
           <material>
             <script>
-              <uri>model://concrete_40_40_500/materials/scripts</uri>
-              <uri>model://concrete_40_40_500/materials/textures/</uri>
+              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/scripts</uri>
+              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/textures/</uri>
               <name>concrete/Image</name>
             </script>
           </material>
