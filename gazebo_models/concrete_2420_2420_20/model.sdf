@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.5">
+<model name='concrete_2420_2420_20'>
+      <static>1</static>
+      <link name="link">
+        <pose>0 0 0.1 0 0 0</pose>
+
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>24.2 24.2 0.2</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/scripts</uri>
+              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/textures/</uri>
+              <name>concrete/Image</name>
+            </script>
+          </material>
+        </visual>
+
+      </link>
+
+      <plugin name='concrete' filename='libgazebo_rad_obstacle.so'>
+        <depth>24.2</depth> <!-- m -->
+        <width>24.2</width> <!-- m -->
+        <height>0.2</height> <!-- m -->
+        <material>concrete</material> <!-- m -->
+        <density>2.3</density> <!-- g/cm^3 -->
+        <mac60kev>0.266</mac60kev> <!-- cm^2/g -->
+        <mac600kev>0.06236</mac600kev> <!-- cm^2/g -->
+      </plugin>
+
+    </model>
+  </sdf>

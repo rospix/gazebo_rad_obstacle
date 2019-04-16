@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.5">
+<model name='wood_10_300_460'>
+      <static>1</static>
+      <link name="link">
+        <pose>0 0 2.3 0 0 0</pose>
+
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.1 3.0 4.6</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/scripts</uri>
+              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/textures/</uri>
+              <name>wood/Image</name>
+            </script>
+          </material>
+        </visual>
+
+      </link>
+
+      <plugin name='wood' filename='libgazebo_rad_obstacle.so'>
+        <depth>0.1</depth> <!-- m -->
+        <width>3.0</width> <!-- m -->
+        <height>4.6</height> <!-- m -->
+        <material>wood</material> <!-- m -->
+        <density>0.7</density> <!-- g/cm^3 -->
+        <mac60kev>0.1907</mac60kev> <!-- cm^2/g -->
+        <mac600kev>0.0807</mac600kev> <!-- cm^2/g -->
+      </plugin>
+
+    </model>
+  </sdf>

@@ -1,5 +1,5 @@
 #!/bin/bash
-
+./cleanup.sh
 for filename in *; do
   if [[ -d $filename ]]; then
     cd $filename
