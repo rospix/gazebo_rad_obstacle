@@ -168,20 +168,16 @@ namespace gazebo
 
   void RadiationObstacle::OnUpdate(const common::UpdateInfo&) {
 
-    common::Time current_time = world_->SimTime();
+    auto                   pose  = model_->GetLinks()[0]->WorldPose();
 
-    ignition::math::Pose3d T_W_I = model_->WorldPose();
-    auto                   link  = model_->GetLinks()[0];
+      obstacle_msg.set_pos_x(pose.Pos().X());
+      obstacle_msg.set_pos_y(pose.Pos().Y());
+      obstacle_msg.set_pos_z(pose.Pos().Z());
 
-    if (current_time.sec > last_time_.sec + 0.1) {
-      obstacle_msg.set_pos_x(link->WorldPose().Pos().X());
-      obstacle_msg.set_pos_y(link->WorldPose().Pos().Y());
-      obstacle_msg.set_pos_z(link->WorldPose().Pos().Z());
-
-      obstacle_msg.set_ori_w(link->WorldPose().Rot().W());
-      obstacle_msg.set_ori_x(link->WorldPose().Rot().X());
-      obstacle_msg.set_ori_y(link->WorldPose().Rot().Y());
-      obstacle_msg.set_ori_z(link->WorldPose().Rot().Z());
+      obstacle_msg.set_ori_w(pose.Rot().W());
+      obstacle_msg.set_ori_x(pose.Rot().X());
+      obstacle_msg.set_ori_y(pose.Rot().Y());
+      obstacle_msg.set_ori_z(pose.Rot().Z());
 
       obstacle_msg.set_scale_x(depth);
       obstacle_msg.set_scale_y(width);
@@ -195,13 +191,10 @@ namespace gazebo
 
       obstacle_pub->Publish(obstacle_msg);
 
-      Eigen::Vector3d    center(link->WorldPose().Pos().X(), link->WorldPose().Pos().Y(), link->WorldPose().Pos().Z());
-      Eigen::Quaterniond orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(),
-                                     model_->WorldPose().Rot().Z());
+      Eigen::Vector3d    center(pose.Pos().X(), pose.Pos().Y(), pose.Pos().Z());
+      Eigen::Quaterniond orientation(pose.Rot().W(), pose.Rot().X(), pose.Rot().Y(), pose.Rot().Z());
 
       cuboid     = Cuboid(center, orientation, depth, width, height);
-      last_time_ = current_time;
-    }
   }
 
   //}
