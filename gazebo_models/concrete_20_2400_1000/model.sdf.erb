@@ -12,10 +12,6 @@ height = dirname_split[3].to_f/100
 
 vertical_offset = height/2
 
-density = 2.3
-mac60kev = 2.66E-01
-mac600kev = 6.236E-02
-
 %>
 <sdf version="1.5">
 <%= "<model name='" + dirname + "'>" %>
@@ -37,7 +33,23 @@ mac600kev = 6.236E-02
             </script>
           </material>
         </visual>
-
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size><%= depth %> <%= width %> <%= height %></size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>0</mu2>
+                <slip1>1.0</slip1>
+                <slip2>1.0</slip2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
       </link>
 
       <%= "<plugin name='" + material + "' filename='libgazebo_rad_obstacle.so'>" %>
@@ -45,9 +57,6 @@ mac600kev = 6.236E-02
         <width><%= width %></width> <!-- m -->
         <height><%= height %></height> <!-- m -->
         <material><%= material %></material> <!-- m -->
-        <density><%= density %></density> <!-- g/cm^3 -->
-        <mac60kev><%= mac60kev %></mac60kev> <!-- cm^2/g -->
-        <mac600kev><%= mac600kev %></mac600kev> <!-- cm^2/g -->
       </plugin>
 
     </model>

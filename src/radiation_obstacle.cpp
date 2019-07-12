@@ -15,8 +15,6 @@
 
 #include <geometry_visual_utils/visual_utils.h>
 
-#include <mutex>
-
 #include <gazebo_rad_msgs/RadiationObstacle.pb.h>
 #include <gazebo_rad_msgs/RadiationObstacle.h>
 

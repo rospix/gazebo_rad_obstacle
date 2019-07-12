@@ -20,7 +20,23 @@
             </script>
           </material>
         </visual>
-
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.2 24.0 10.0</size>
+            </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>0</mu2>
+                <slip1>1.0</slip1>
+                <slip2>1.0</slip2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
       </link>
 
       <plugin name='concrete' filename='libgazebo_rad_obstacle.so'>
@@ -28,9 +44,6 @@
         <width>24.0</width> <!-- m -->
         <height>10.0</height> <!-- m -->
         <material>concrete</material> <!-- m -->
-        <density>2.3</density> <!-- g/cm^3 -->
-        <mac60kev>0.266</mac60kev> <!-- cm^2/g -->
-        <mac600kev>0.06236</mac600kev> <!-- cm^2/g -->
       </plugin>
 
     </model>
