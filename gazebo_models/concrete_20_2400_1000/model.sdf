@@ -40,10 +40,8 @@
       </link>
 
       <plugin name='concrete' filename='libgazebo_rad_obstacle.so'>
-        <depth>0.2</depth> <!-- m -->
-        <width>24.0</width> <!-- m -->
-        <height>10.0</height> <!-- m -->
-        <material>concrete</material> <!-- m -->
+      <material>concrete</material> <!-- m -->
+      <publish_rate>10</publish_rate> <!-- Hz -->
       </plugin>
 
     </model>

@@ -9,6 +9,7 @@ material = dirname_split[0]
 depth = dirname_split[1].to_f/100
 width = dirname_split[2].to_f/100
 height = dirname_split[3].to_f/100
+publish_rate = 10
 
 vertical_offset = height/2
 
@@ -53,10 +54,8 @@ vertical_offset = height/2
       </link>
 
       <%= "<plugin name='" + material + "' filename='libgazebo_rad_obstacle.so'>" %>
-        <depth><%= depth %></depth> <!-- m -->
-        <width><%= width %></width> <!-- m -->
-        <height><%= height %></height> <!-- m -->
-        <material><%= material %></material> <!-- m -->
+      <material><%= material %></material> <!-- m -->
+      <publish_rate><%= publish_rate %></publish_rate> <!-- Hz -->
       </plugin>
 
     </model>
