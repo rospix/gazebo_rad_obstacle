@@ -4,6 +4,12 @@ using namespace gazebo;
 
 /* Destructor //{ */
 Obstacle::~Obstacle() {
+  // inform other gazebo nodes
+  gazebo_rad_msgs::msgs::Termination msg;
+  msg.set_id(model_->GetId());
+  termination_publisher_->Publish(msg);
+
+  // terminate
   terminated = true;
   publisher_thread.join();
   ROS_INFO("[RadiationObstacle%u]: Plugin terminated", model_->GetId());
@@ -40,8 +46,9 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   ros_node.reset(new ros::NodeHandle("~"));
 
   // gazebo communication
-  updateConnection_       = event::Events::ConnectWorldUpdateBegin(boost::bind(&Obstacle::EarlyUpdate, this, _1));
-  this->gazebo_publisher_ = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::RadiationObstacle>("~/radiation/obstacles", 1);
+  updateConnection_            = event::Events::ConnectWorldUpdateBegin(boost::bind(&Obstacle::EarlyUpdate, this, _1));
+  this->gazebo_publisher_      = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::RadiationObstacle>("~/radiation/obstacles", 1);
+  this->termination_publisher_ = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::Termination>("~/radiation/termination", 1);
 
   // ros communication
   ros_publisher = ros_node->advertise<gazebo_rad_msgs::RadiationObstacle>("/radiation/obstacles", 1);
@@ -78,8 +85,8 @@ void Obstacle::PublisherLoop() {
     msg.set_scale_x(scale_x);
     msg.set_scale_y(scale_y);
     msg.set_scale_z(scale_z);
-    msg.set_material(material);
     msg.set_id(model_->GetId());
+    msg.set_material(material);
     gazebo_publisher_->Publish(msg);
     //}
 

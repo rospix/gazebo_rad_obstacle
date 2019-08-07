@@ -7,6 +7,7 @@
 #include <gazebo/physics/physics.hh>
 #include <gazebo/transport/transport.hh>
 
+#include <gazebo_rad_msgs/Termination.pb.h>
 #include <gazebo_rad_msgs/RadiationObstacle.pb.h>
 #include <gazebo_rad_msgs/RadiationObstacle.h>
 
@@ -34,6 +35,7 @@ private:
   physics::ModelPtr       model_;
   transport::NodePtr      gazebo_node_;
   transport::PublisherPtr gazebo_publisher_;
+  transport::PublisherPtr termination_publisher_;
   event::ConnectionPtr    updateConnection_;
 
   std::unique_ptr<ros::NodeHandle> ros_node;
