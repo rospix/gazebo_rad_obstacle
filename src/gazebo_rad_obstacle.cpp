@@ -20,7 +20,10 @@ Obstacle::~Obstacle() {
 void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
   // init local variables
-  model_ = _model;
+  model_       = _model;
+  position     = Eigen::Vector3d(model_->WorldPose().Pos().X(), model_->WorldPose().Pos().Y(), model_->WorldPose().Pos().Z());
+  orientation  = Eigen::Quaterniond(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(), model_->WorldPose().Rot().Z());
+  param_change = true;
 
   // parse sdf params
   if (_sdf->HasElement("material")) {
@@ -46,7 +49,6 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   ros_node.reset(new ros::NodeHandle("~"));
 
   // gazebo communication
-  updateConnection_            = event::Events::ConnectWorldUpdateBegin(boost::bind(&Obstacle::EarlyUpdate, this, _1));
   this->gazebo_publisher_      = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::RadiationObstacle>("~/radiation/obstacles", 1);
   this->termination_publisher_ = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::Termination>("~/radiation/termination", 1);
 
@@ -59,19 +61,18 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 }
 //}
 
-/* EarlyUpdate //{ */
-void Obstacle::EarlyUpdate(const common::UpdateInfo &upd) {
-  auto collision    = model_->GetLink("link")->GetCollisions()[0];
-  auto bounding_box = boost::dynamic_pointer_cast<physics::BoxShape>(collision->GetShape());
-  scale_x           = bounding_box->Size().X();
-  scale_y           = bounding_box->Size().Y();
-  scale_z           = bounding_box->Size().Z();
-}
-//}
-
 /* PublisherLoop //{ */
 void Obstacle::PublisherLoop() {
   while (!terminated) {
+
+    Eigen::Vector3d    new_position(model_->WorldPose().Pos().X(), model_->WorldPose().Pos().Y(), model_->WorldPose().Pos().Z());
+    Eigen::Quaterniond new_orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(),
+                                       model_->WorldPose().Rot().Z());
+
+    if (!param_change && new_position == position && new_orientation.coeffs() == orientation.coeffs()) {
+      std::this_thread::sleep_for(sleep_seconds);
+      continue;
+    }
 
     /* Gazebo message //{ */
     gazebo_rad_msgs::msgs::RadiationObstacle msg;
@@ -109,6 +110,9 @@ void Obstacle::PublisherLoop() {
     //}
 
     std::this_thread::sleep_for(sleep_seconds);
+    position     = new_position;
+    orientation  = new_orientation;
+    param_change = false;
   }
 }
 //}

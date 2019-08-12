@@ -45,3 +45,8 @@ add_dependencies(
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
   )
+
+# add_custom_command(TARGET gazebo_rad_obstacle
+#   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+#   COMMAND bash -c "${CMAKE_CURRENT_SOURCE_DIR}/gazebo_models/build.sh"
+#   )

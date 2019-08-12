@@ -11,6 +11,9 @@
 #include <gazebo_rad_msgs/RadiationObstacle.pb.h>
 #include <gazebo_rad_msgs/RadiationObstacle.h>
 
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
+
 namespace gazebo
 {
 class GAZEBO_VISIBLE Obstacle : public ModelPlugin {
@@ -20,12 +23,15 @@ public:
 
 protected:
   virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-  virtual void EarlyUpdate(const common::UpdateInfo &upd);
 
 private:
+  bool            param_change;
+  Eigen::Vector3d position;
+  Eigen::Quaterniond orientation;
+
   bool          terminated;
-  boost::thread publisher_thread;
   void          PublisherLoop();
+  boost::thread publisher_thread;
 
   std::string                   material;
   double                        publish_rate;
