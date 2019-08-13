@@ -21,9 +21,10 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
   // init local variables
   model_       = _model;
+  param_change = true;
+
   position     = Eigen::Vector3d(model_->WorldPose().Pos().X(), model_->WorldPose().Pos().Y(), model_->WorldPose().Pos().Z());
   orientation  = Eigen::Quaterniond(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(), model_->WorldPose().Rot().Z());
-  param_change = true;
 
   // parse sdf params
   if (_sdf->HasElement("material")) {
@@ -36,6 +37,26 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
     sleep_seconds = std::chrono::duration<double>(1 / publish_rate);
   } else {
     ROS_WARN("[RadiationSource%u]: parameter 'publish_rate' was not specified", model_->GetId());
+  }
+  if (_sdf->HasElement("publish_rate")) {
+    publish_rate = _sdf->Get<double>("publish_rate");
+  } else {
+    ROS_WARN("[RadiationSource%u]: parameter 'publish_rate' was not specified", model_->GetId());
+  }
+  if (_sdf->HasElement("scale_x")) {
+    scale_x = _sdf->Get<double>("scale_x");
+  } else {
+    ROS_WARN("[RadiationSource%u]: parameter 'scale_x' was not specified", model_->GetId());
+  }
+  if (_sdf->HasElement("scale_y")) {
+    scale_y = _sdf->Get<double>("scale_y");
+  } else {
+    ROS_WARN("[RadiationSource%u]: parameter 'scale_y' was not specified", model_->GetId());
+  }
+  if (_sdf->HasElement("scale_z")) {
+    scale_z = _sdf->Get<double>("scale_z");
+  } else {
+    ROS_WARN("[RadiationSource%u]: parameter 'scale_z' was not specified", model_->GetId());
   }
 
   // init gazebo node
@@ -65,14 +86,14 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 void Obstacle::PublisherLoop() {
   while (!terminated) {
 
-    Eigen::Vector3d    new_position(model_->WorldPose().Pos().X(), model_->WorldPose().Pos().Y(), model_->WorldPose().Pos().Z());
-    Eigen::Quaterniond new_orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(),
-                                       model_->WorldPose().Rot().Z());
+    /* Eigen::Vector3d    new_position(model_->WorldPose().Pos().X(), model_->WorldPose().Pos().Y(), model_->WorldPose().Pos().Z()); */
+    /* Eigen::Quaterniond new_orientation(model_->WorldPose().Rot().W(), model_->WorldPose().Rot().X(), model_->WorldPose().Rot().Y(), */
+    /*                                    model_->WorldPose().Rot().Z()); */
 
-    if (!param_change && new_position == position && new_orientation.coeffs() == orientation.coeffs()) {
-      std::this_thread::sleep_for(sleep_seconds);
-      continue;
-    }
+    /* if (new_position == position && new_orientation.coeffs() == orientation.coeffs() && !param_change) { */
+    /*   std::this_thread::sleep_for(sleep_seconds); */
+    /*   continue; */
+    /* } */
 
     /* Gazebo message //{ */
     gazebo_rad_msgs::msgs::RadiationObstacle msg;
@@ -110,9 +131,9 @@ void Obstacle::PublisherLoop() {
     //}
 
     std::this_thread::sleep_for(sleep_seconds);
-    position     = new_position;
-    orientation  = new_orientation;
-    param_change = false;
+    /* position     = new_position; */
+    /* orientation  = new_orientation; */
+    /* param_change = false; */
   }
 }
 //}
