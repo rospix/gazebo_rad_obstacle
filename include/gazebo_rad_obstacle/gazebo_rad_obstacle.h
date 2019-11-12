@@ -25,17 +25,16 @@ protected:
   virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
 private:
-  bool            param_change;
   Eigen::Vector3d position;
+  Eigen::Vector3d size;
   Eigen::Quaterniond orientation;
 
   bool          terminated;
-  void          PublisherLoop();
   boost::thread publisher_thread;
+  void          PublisherLoop();
 
   std::string                   material;
   double                        publish_rate;
-  double                        scale_x, scale_y, scale_z;
   std::chrono::duration<double> sleep_seconds;
 
   physics::ModelPtr       model_;
@@ -46,8 +45,6 @@ private:
 
   std::unique_ptr<ros::NodeHandle> ros_node;
   ros::Publisher                   ros_publisher;
-  ros::Subscriber                  change_activity_sub;
-  ros::Subscriber                  change_material_sub;
 };
 
 GZ_REGISTER_MODEL_PLUGIN(Obstacle)
