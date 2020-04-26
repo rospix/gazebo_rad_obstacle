@@ -88,13 +88,13 @@ void Obstacle::PublisherLoop() {
     gazebo_rad_msgs::msgs::RadiationObstacle msg;
     msg.set_pos_x(model_->WorldPose().Pos().X());
     msg.set_pos_y(model_->WorldPose().Pos().Y());
-    msg.set_pos_z(model_->WorldPose().Pos().Z());
+    msg.set_pos_z(model_->WorldPose().Pos().Z() + (size[2] / 2.0));
 
     msg.set_ori_x(model_->WorldPose().Rot().X());
     msg.set_ori_y(model_->WorldPose().Rot().Y());
     msg.set_ori_z(model_->WorldPose().Rot().Z());
     msg.set_ori_w(model_->WorldPose().Rot().W());
-    
+
     msg.set_size_x(size[0]);
     msg.set_size_y(size[1]);
     msg.set_size_z(size[2]);
@@ -110,7 +110,7 @@ void Obstacle::PublisherLoop() {
     debug_msg.id                 = model_->GetId();
     debug_msg.pose.position.x    = model_->WorldPose().Pos().X();
     debug_msg.pose.position.y    = model_->WorldPose().Pos().Y();
-    debug_msg.pose.position.z    = model_->WorldPose().Pos().Z();
+    debug_msg.pose.position.z    = model_->WorldPose().Pos().Z() + (size[2] / 2.0);
     debug_msg.pose.orientation.x = model_->WorldPose().Rot().X();
     debug_msg.pose.orientation.y = model_->WorldPose().Rot().Y();
     debug_msg.pose.orientation.z = model_->WorldPose().Rot().Z();
