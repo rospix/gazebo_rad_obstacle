@@ -1,5 +1,7 @@
 #!/bin/bash
+
 ./cleanup.sh
+
 for filename in *; do
   if [[ -d $filename ]]; then
     cd $filename
@@ -12,5 +14,5 @@ for filename in *; do
     cd ..
   fi
 done
-echo "Done"
 
+echo "Done"

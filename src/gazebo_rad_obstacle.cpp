@@ -1,25 +1,65 @@
+/* includes //{ */
+
 #include <sdf/sdf.hh>
 #include <boost/thread.hpp>
 
-#include <gazebo_rad_obstacle/gazebo_rad_obstacle.h>
+#include <ros/ros.h>
+#include <ros/package.h>
+#include <gazebo/gazebo.hh>
+#include <gazebo/physics/physics.hh>
+#include <gazebo/transport/transport.hh>
 
-using namespace gazebo;
+#include <gazebo_rad_msgs/Termination.pb.h>
+#include <gazebo_rad_msgs/RadiationObstacle.pb.h>
+#include <gazebo_rad_msgs/RadiationObstacle.h>
 
-/* Destructor //{ */
-Obstacle::~Obstacle() {
-  // inform other gazebo nodes
-  gazebo_rad_msgs::msgs::Termination msg;
-  msg.set_id(model_->GetId());
-  termination_publisher_->Publish(msg);
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Geometry>
 
-  // terminate
-  terminated = true;
-  publisher_thread.join();
-  ROS_INFO("[RadiationObstacle%u]: Plugin terminated", model_->GetId());
-}
 //}
 
-/* Load //{ */
+namespace gazebo
+{
+
+/* class Obstacle //{ */
+
+class GAZEBO_VISIBLE Obstacle : public ModelPlugin {
+public:
+  Obstacle();
+  virtual ~Obstacle();
+
+protected:
+  virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+
+private:
+  Eigen::Vector3d    position;
+  Eigen::Vector3d    size;
+  Eigen::Quaterniond orientation;
+
+  bool          terminated;
+  boost::thread publisher_thread;
+  void          PublisherLoop();
+
+  std::string                   material;
+  double                        publish_rate;
+  std::chrono::duration<double> sleep_seconds;
+
+  physics::ModelPtr       model_;
+  transport::NodePtr      gazebo_node_;
+  transport::PublisherPtr gazebo_publisher_;
+  transport::PublisherPtr termination_publisher_;
+  event::ConnectionPtr    updateConnection_;
+
+  ros::NodeHandle ros_nh_;
+  ros::Publisher  ros_publisher;
+};
+
+//}
+
+// | -------------------- Plugin interface -------------------- |
+
+/* Load() //{ */
+
 void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
   // init local variables
@@ -65,26 +105,49 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   int    argc = 0;
   char **argv = NULL;
   ros::init(argc, argv, "gazebo_rad_obstacle", ros::init_options::NoSigintHandler);
-  ros_node.reset(new ros::NodeHandle("~"));
+  ros_nh_ = ros::NodeHandle("~");
 
   // gazebo communication
   this->gazebo_publisher_      = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::RadiationObstacle>("~/radiation/obstacles", 1);
   this->termination_publisher_ = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::Termination>("~/radiation/termination", 1);
 
   // ros communication
-  ros_publisher = ros_node->advertise<gazebo_rad_msgs::RadiationObstacle>("/radiation/obstacles", 1);
+  ros_publisher = ros_nh_.advertise<gazebo_rad_msgs::RadiationObstacle>("/radiation/obstacles", 1);
 
   terminated       = false;
   publisher_thread = boost::thread(boost::bind(&Obstacle::PublisherLoop, this));
   ROS_INFO("[RadiationObstacle%u]: Plugin initialized", model_->GetId());
 }
+
 //}
 
-/* PublisherLoop //{ */
+/* ~Obstacle() //{ */
+
+Obstacle::~Obstacle() {
+
+  // inform other gazebo nodes
+  gazebo_rad_msgs::msgs::Termination msg;
+  msg.set_id(model_->GetId());
+  termination_publisher_->Publish(msg);
+
+  // terminate
+  terminated = true;
+  publisher_thread.join();
+  ROS_INFO("[RadiationObstacle%u]: Plugin terminated", model_->GetId());
+}
+
+//}
+
+// | --------------------- Custom routines -------------------- |
+
+/* PublisherLoop() //{ */
+
 void Obstacle::PublisherLoop() {
+
   while (!terminated) {
 
     /* Gazebo message //{ */
+
     gazebo_rad_msgs::msgs::RadiationObstacle msg;
     msg.set_pos_x(model_->WorldPose().Pos().X());
     msg.set_pos_y(model_->WorldPose().Pos().Y());
@@ -102,9 +165,11 @@ void Obstacle::PublisherLoop() {
     msg.set_id(model_->GetId());
     msg.set_material(material);
     gazebo_publisher_->Publish(msg);
+
     //}
 
     /* ROS message (debug) //{ */
+
     gazebo_rad_msgs::RadiationObstacle debug_msg;
     debug_msg.material           = material;
     debug_msg.id                 = model_->GetId();
@@ -120,9 +185,15 @@ void Obstacle::PublisherLoop() {
     debug_msg.size.z             = size[2];
     debug_msg.stamp              = ros::Time::now();
     ros_publisher.publish(debug_msg);
+
     //}
 
     std::this_thread::sleep_for(sleep_seconds);
   }
 }
+
 //}
+
+}  // namespace gazebo
+
+GZ_REGISTER_MODEL_PLUGIN(gazebo::Obstacle)
