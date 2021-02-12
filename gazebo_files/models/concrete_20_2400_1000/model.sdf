@@ -14,8 +14,8 @@
           </geometry>
           <material>
             <script>
-              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/scripts</uri>
-              <uri>model:///home/stibipet/mrs_workspace/src/radiation_nodes/gazebo_rad_obstacle/gazebo_models/materials/textures/</uri>
+              <uri>model:///home/klaxalk/git/radiation/radiation_simulation/.gitman/gazebo_rad_obstacle/gazebo_files/materials/scripts</uri>
+              <uri>model:///home/klaxalk/git/radiation/radiation_simulation/.gitman/gazebo_rad_obstacle/gazebo_files/materials/textures</uri>
               <name>concrete/Image</name>
             </script>
           </material>

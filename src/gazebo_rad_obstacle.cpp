@@ -121,6 +121,13 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 
 //}
 
+/* Obstacle() //{ */
+
+Obstacle::Obstacle() {
+}
+
+//}
+
 /* ~Obstacle() //{ */
 
 Obstacle::~Obstacle() {

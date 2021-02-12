@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   gazebo_ros
+  gazebo_plugins
   gazebo_rad_msgs
   )
 
@@ -19,7 +20,7 @@ find_package(gazebo REQUIRED)
 
 catkin_package(
   DEPENDS gazebo_ros gazebo_rad_msgs
-  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp std_msgs
   )
 
 include_directories(
@@ -28,20 +29,24 @@ include_directories(
   )
 
 add_library(
-  ${PROJECT_NAME} SHARED
-  src/${PROJECT_NAME}.cpp
+  gazebo_rad_obstacle SHARED
+  src/gazebo_rad_obstacle.cpp
   )
 
 target_link_libraries(
-  ${PROJECT_NAME}
+  gazebo_rad_obstacle
   ${catkin_LIBRARIES}
   ${GAZEBO_LIBRARIES}
   )
 
 add_dependencies(
-  ${PROJECT_NAME}
+  gazebo_rad_obstacle
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
+  )
+
+install(DIRECTORY gazebo_files/models
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   )
 
 # add_custom_command(TARGET gazebo_rad_obstacle
