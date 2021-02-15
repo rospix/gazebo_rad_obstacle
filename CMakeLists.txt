@@ -45,7 +45,7 @@ add_dependencies(
   ${catkin_EXPORTED_TARGETS}
   )
 
-install(DIRECTORY gazebo_files/models
+install(DIRECTORY gazebo_files
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   )
 

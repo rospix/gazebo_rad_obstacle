@@ -19,9 +19,9 @@
   <depend>gazebo_plugins</depend>
 
   <export>
-    <gazebo_ros gazebo_model_path="${prefix}/gazebo_files/models" />
-    <gazebo_ros gazebo_media_path="${prefix}"/>
-    <gazebo_ros plugin_path="${prefix}/lib"/>
+    <gazebo_ros gazebo_model_path="${prefix}/gazebo_files" />
+    <gazebo_ros gazebo_media_path="${prefix}" />
+    <gazebo_ros plugin_path="${prefix}/lib" />
   </export>
 
 </package>
