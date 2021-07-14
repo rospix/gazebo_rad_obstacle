@@ -108,8 +108,8 @@ void Obstacle::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
   ros_nh_ = ros::NodeHandle("~");
 
   // gazebo communication
-  this->gazebo_publisher_      = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::RadiationObstacle>("~/radiation/obstacles", 1);
-  this->termination_publisher_ = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::Termination>("~/radiation/termination", 1);
+  this->gazebo_publisher_      = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::RadiationObstacle>("/radiation/obstacles", 1);
+  this->termination_publisher_ = gazebo_node_->Advertise<gazebo_rad_msgs::msgs::Termination>("/radiation/termination", 1);
 
   // ros communication
   ros_publisher = ros_nh_.advertise<gazebo_rad_msgs::RadiationObstacle>("/radiation/obstacles", 1);
